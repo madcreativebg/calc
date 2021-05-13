@@ -1,0 +1,143 @@
+<div class="white-box calc">
+	<div class="row">
+		<div class="col-xs-12 text-right">
+			<div class="calc-toggle">
+				<div class="calc-2 active"><span>2</span>коефициента</div>
+				<div class="calc-3"><span>3</span>коефициента</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-4">
+
+		</div>
+		<div class="col-xs-4 text-center calc-title">
+			<b>Реална вероятност</b>
+		</div>
+		<div class="col-xs-4 text-center calc-title">
+			<b>Реален коефициент</b>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-4 pr-0">
+			<input class='item coeff1' type='number' placeholder="Въведи коеф" value=' ' step=".04">
+		</div>
+		<div class="col-xs-4 pr-0">
+			<input class='realprobability1' readonly type='number' value=' ' disabled>
+		</div>
+		<div class="col-xs-4">
+			<input class='realcoeff1' readonly type='number' value=' ' disabled>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-4 pr-0">
+			<input class='item coeff2' type='number' placeholder="Въведи коеф" value=' ' step=".04">
+		</div>
+		<div class="col-xs-4 pr-0">
+			<input class='realprobability2' readonly type='number' value=' ' disabled>
+		</div>
+		<div class="col-xs-4">
+			<input class='realcoeff2' readonly type='number' value=' ' disabled>
+		</div>
+	</div>
+	<div class="row toggle-hidden hidden">
+		<div class="col-xs-4 pr-0">
+			<input class='item coeff3' type='number' placeholder="Въведи коеф" value=' ' step=".04">
+		</div>
+		<div class="col-xs-4 pr-0">
+			<input class='realprobability3' readonly type='number' value=' ' disabled>
+		</div>
+		<div class="col-xs-4">
+			<input class='realcoeff3' readonly type='number' value=' ' disabled>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12 text-right">
+			<div class="clear-calc" id="clearAll"><i class="icon icon-cancel"></i>Изчисти</div>
+		</div>
+		<div class="col-xs-12 text-right">
+			<span class="marj"><b>Марж:</b></span> <input class='totalmargin' readonly type='text' value=' ' disabled>
+		</div>
+	</div>
+
+<div class="row">
+<div class="col-xs-12 text-center">
+[Букмейкърът ще изплати <div class="bookmaker_profit" style="display:inline-block;font-weight:700;">0.00</div><b>%</b> от реалната печалба, т.е. без комисионната]
+</div>
+</div>
+</div>
+
+<script type="text/javascript">
+jQuery(function() {
+
+    jQuery(document).on("change", ".item", function () {
+
+        var coeff1 = $('.coeff1').val(); 
+        var coeff2 = $('.coeff2').val(); 
+        var coeff3 = $('.coeff3').val();
+        var tm = getTotalMargin(coeff1, coeff2, coeff3); // total margin
+        var tmpct = getTotalMargin(coeff1, coeff2, coeff3) / 100; // total margin
+ 
+        // first slot 
+        if (coeff1!=0 && coeff2!=0)// && coeff3!=0)
+            {
+                var realcoeff1 = getRealCoeff(coeff1, tm);
+                jQuery('.realprobability1').val(getRealProbability(realcoeff1));
+                jQuery('.realcoeff1').val(getRealCoeff(coeff1, tm));  
+
+                // second slot
+                var realcoeff2 = getRealCoeff(coeff2, tm);
+                jQuery('.realprobability2').val(getRealProbability(realcoeff2));
+                jQuery('.realcoeff2').val(getRealCoeff(coeff2, tm)); 
+
+
+                // third slot
+                var realcoeff3 = getRealCoeff(coeff3, tm);
+                jQuery('.realprobability3').val(getRealProbability(realcoeff3));
+                jQuery('.realcoeff3').val(getRealCoeff(coeff3, tm)); 
+
+
+                // set total marge
+                jQuery('.totalmargin').val(tm);  
+                $('div.bookmaker_profit').text(100 - tm);
+            }
+
+    });
+
+});
+
+var clearAll = document.getElementById('clearAll');
+
+clearAll.addEventListener('click', function() {
+            $('.calc').find('input:text').val('');
+            $('.calc').find('input[type="number"]').val('');
+}, false); 
+         
+
+		function getRealProbability(coeff)
+		{
+			return ((1/coeff)*100).toFixed(2);
+		}
+
+        function getTotalMargin(coeff1, coeff2, coeff3) {
+
+            var totalmargin = 0; 
+            if(coeff1 > 0)
+             totalmargin = (1/coeff1) *100;
+            if(coeff2 > 0)
+             totalmargin = (1/coeff1) *100 + (1/coeff2) *100;
+            if(coeff3 > 0)
+             totalmargin = (1/coeff1) *100 + (1/coeff2) *100 + (1/coeff3) *100; 
+
+            totalmargin -= 100; 
+
+            return parseFloat(totalmargin).toFixed(2);
+        }
+
+        function getRealCoeff(coeff, margin) {
+			var ff = parseFloat(coeff) * parseFloat(margin / 100) + parseFloat(coeff); 
+            return parseFloat(ff).toFixed(3);
+        }
+ 
+ 
+</script>
